@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>台データ編集画面</title>
+  <link rel="stylesheet" href="/static/css/editor.css">
+  <script>
+    function goCrop() {
+      removeLocalStorageExcept("dev");
+      window.location.href = '/crop';
+    }
+    function goSend() {
+      let cropFlag = false;
+      for (let i = 0; (i < localStorage.length) && (!cropFlag); i++) {
+        const key = localStorage.key(i);
+        cropFlag = key.includes("SnippingArea"); 
+      }
+      //const cropFlag = localStorage.getItem('cropDone') === 'true';
+      // inputFlag = localStorage.getItem('inputDone') === 'true';
+      if (cropFlag) {
+        window.location.href = '/send';
+      } else {
+        alert("切り抜き範囲を設定してください");
+      }
+    }
+    function clearStorage() {
+      if (confirm("全部削除するぞええな！")) {
+        localStorage.clear();
+        alert("localStorageを削除しました");
+      }
+    }
+
+    function removeLocalStorageExcept(keysToKeep) {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!keysToKeep.includes(key)) {
+          localStorage.removeItem(key);
+        }
+    }
+}
+
+  </script>
+</head>
+<body>
+  <h1>台データ編集画面</h1>
+  <div  class = "wrap">
+    <button onclick="goCrop()">切り抜き範囲選択</button>
+    <button onclick="goSend()">サーバー送信</button>
+    <button onclick="clearStorage()">localStorage情報削除</button>
+  </div>
+</body>
+</html>

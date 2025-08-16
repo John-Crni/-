@@ -1,0 +1,94 @@
+.del{
+    position: absolute;
+    top: -0.1em;
+    left: 10em;
+    color: #ffffff;
+}
+
+h1 {
+    font-size: 20px;
+}
+
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+td {
+    border: 1px solid #ddd;
+    padding: 5px;
+    text-align: center;
+}
+
+td:first-child {
+    color: red;
+}
+
+td:last-child {
+    color: royalblue;
+}
+
+button{
+  display: block;
+  background: #aacf53; /* 緑色 */
+  color: #fff;
+  border: solid 4px #aacf53; /* 緑色 */
+  font-size: 1.4em;
+  border-radius: 5px;
+  width: 4vw;
+  height: 4vb;
+  text-align: center;
+}
+
+button:hover{
+  background: #82ae46; /* 少し濃い緑色 */
+  border: solid 4px #46700a; /* 少し濃い緑色 */
+}
+
+button:active{
+  background: #46700a; /* 濃い緑色 */
+}
+
+button:disabled{
+  background: #1a2b03; /* 濃い緑色 */
+  border: solid 4px #1a2b03; /* 少し濃い緑色 */
+}
+
+button.selecting:hover {
+  background: #1a2b03; /* 濃い緑色 */
+  border: solid 4px #1a2b03; /* 少し濃い緑色 */
+}
+
+button.selecting:active {
+  background: #1a2b03; /* 濃い緑色 */
+  border: solid 4px #1a2b03; /* 少し濃い緑色 */
+}
+
+button.selecting {
+  background: #1a2b03; /* 濃い緑色 */
+  border: solid 4px #1a2b03; /* 少し濃い緑色 */
+}
+
+
+.day-container {
+    position: relative;
+    display: inline-block;
+}
+
+.month-label {
+    position: absolute;
+    top: -0.1em;
+    left: 0.7em;
+    font-size: 1em;
+    color: #ffffff;
+}
+
+.day-container.today {
+    outline: 2px solid red;
+    border-radius: 5px;
+}
+
+#fileInput {
+    display: none;
+}
+

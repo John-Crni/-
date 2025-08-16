@@ -1,0 +1,171 @@
+.del{
+    position: absolute;
+    top: -0.1em;
+    left: 10em;
+    color: #ffffff;
+}
+
+h1 {
+  background: linear-gradient(45deg, #B67B03 0%, #DAAF08 45%, #FEE9A0 70%, #DAAF08 85%, #B67B03 90% 100%);
+  font-weight: bold;
+  font-size: 4vb;
+  /* -webkit-text-stroke-width: 1px; */
+  /* -webkit-text-stroke-color:  linear-gradient(to right,#e60000,#f39800,#fff100,#009944,#0068b7,#1d2088,#920783,#e60000) 0 / 200%; */
+  position: fixed;
+  top: 0;
+  left: -50vw;
+  width: 200%;
+  height: 6vb;
+
+  /* background: rgba(252, 73, 3, 0.5); */
+  z-index: 100;
+  display:block;
+  justify-content: center; 
+  text-align: center;
+  color: #FFF;       /* 文字色を白に変更 */
+  animation: flash 1s infinite; /* アニメーションflashを1秒ごとに繰り返す */
+
+}
+
+@keyframes flash {
+  0%, 100% {
+    /* 明るく光るよう影を重ねる */
+    text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #ff00de, 0 0 70px #ff00de, 0 0 80px #ff00de, 0 0 100px #ff00de, 0 0 150px #ff00de;
+  }
+  50% {
+    /* 淡く光るよう影を重ねる */
+    text-shadow: 0 0 10px #fff, 0 0 20px #fcfcfc, 0 0 30px #fcfcfc, 0 0 40px #fc00de;
+  }
+}
+
+.header-box {
+  height: 80px;
+}
+
+.field {
+display: flex;
+}
+
+
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, .1);
+  display: flex;
+  text-align: center;
+}
+
+.baseCanvas { 
+  position: relative;
+  border: 1px solid #000;
+  left: 0px;   
+  top: 10vb;
+  /* background-color: skyblue; */
+  /* width :500px;
+  height: 300px; */
+  width: 500px;
+  height: 300px;
+  /* margin: auto; */
+}
+
+.overlayCanvas {
+  position: absolute;
+  left: 0px;   
+  top: 0px;   
+  /* margin: 10vb; */
+  border: 1px solid #333;
+  display: flex;
+  /* flex-shrink: 0;      キャンバスの幅を縮めない */
+}
+
+
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+td {
+    border: 1px solid #ddd;
+    padding: 5px;
+    text-align: center;
+}
+
+td:first-child {
+    color: red;
+}
+
+td:last-child {
+    color: royalblue;
+}
+
+button{
+  display: block;
+  background: #aacf53; /* 緑色 */
+  color: #fff;
+  border: solid 4px #aacf53; /* 緑色 */
+  font-size: 4vb;
+  border-radius: 5px;
+  width: 40vb;
+  height: 7vb;
+  text-align: center;
+  margin-top: 10vb;
+  /* left: 50vw;
+  margin-left: auto; */
+}
+
+.selectbtn{
+  display: block;
+  background: #aacf53; /* 緑色 */
+  color: #fff;
+  border: solid 4px #aacf53; /* 緑色 */
+  font-size: 4vb;
+  border-radius: 5px;
+  width: 40vb;
+  height: 7vb;
+  text-align: center;
+  margin-top: 10vb;
+  left: 50vw;
+}
+
+
+.wrap {
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  flex-flow: column;
+}
+
+button:hover{
+  background: #82ae46; /* 少し濃い緑色 */
+  border: solid 4px #46700a; /* 少し濃い緑色 */
+}
+
+button:active{
+  background: #46700a; /* 濃い緑色 */
+}
+
+button:disabled{
+  background: #1a2b03; /* 濃い緑色 */
+  border: solid 4px #1a2b03; /* 少し濃い緑色 */
+}
+
+button.selecting:hover {
+  background: #1a2b03; /* 濃い緑色 */
+  border: solid 4px #1a2b03; /* 少し濃い緑色 */
+}
+
+button.selecting:active {
+  background: #1a2b03; /* 濃い緑色 */
+  border: solid 4px #1a2b03; /* 少し濃い緑色 */
+}
+
+button.selecting {
+  background: #1a2b03; /* 濃い緑色 */
+  border: solid 4px #1a2b03; /* 少し濃い緑色 */
+}
+
+#fileInput {
+    display: none;
+}

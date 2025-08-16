@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>台番号入力画面</title>
+  <script>
+    function saveData() {
+      const value = document.getElementById('inputBox').value;
+      if (!value || !value.trim()) {
+        alert("台番号を入力してください");
+        localStorage.setItem('inputDone', 'false');
+        return;
+      }
+      const list = value.split(/[、,\.\s]+/);
+      list.forEach((v, i) => {
+        localStorage.setItem((i + 1).toString(), v);
+      });
+      localStorage.setItem('inputDone', 'true');
+      alert("保存しました");
+      window.location.href = "/";
+    }
+  </script>
+</head>
+<body>
+  <h1>台番号入力画面</h1>
+  <input type="text" id="inputBox" placeholder="台番号を入力 (区切り文字: , . 、 空白)">
+  <button onclick="saveData()">終了</button>
+</body>
+</html>

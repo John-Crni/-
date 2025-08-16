@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>切抜範囲設定画面</title>
+  <link rel="stylesheet" href="/static/css/crop.css">
+</head>
+<body>
+  <h1>切抜範囲設定画面</h1>
+  <input type="file" id="fileInput" accept="image/*" class = "selectbtn">
+  <div class="baseCanvas" id="canvasbase">
+    <canvas id="baseCanvas"></canvas>
+    <div class="overlayCanvas" id="canvaschild">
+        <canvas id="overlayCanvas"></canvas>
+    </div>
+      <button id="areasetting" class = "selectbtn">範囲設定画像選択</button>
+      <button id="rangeBtn" onclick="toggleRange()" class = "selectbtn">範囲設定</button>
+      <button id="cancelBtn" onclick="cancel()" class = "selectbtn">キャンセル</button>
+      <button onclick="finish()" class = "selectbtn">終了</button>
+  </div>  
+  <br>
+  <script src="/static/js/crop.js"></script>
+</body>
+</html>
