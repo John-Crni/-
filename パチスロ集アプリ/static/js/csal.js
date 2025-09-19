@@ -52,6 +52,7 @@ let calendarHtml = '<table><tr>';
 const DAYS = [];
 weeks.forEach(w => calendarHtml += `<td>${w}</td>`);
 calendarHtml += '</tr>';
+let serialNumber = 1;
 
 calendarMatrix.forEach(week => {
     calendarHtml += '<tr>';
@@ -60,8 +61,9 @@ calendarMatrix.forEach(week => {
             const todayClass = cell.isToday ? ' today' : '';
             const delbtn = cell.isToday? '<button id="deleteBtn" class="del">画像削除</button>' : '';
             const sendbtn = cell.isToday? '<button id="sendBtn" class="sen">画像送信</button>' : '';
-            calendarHtml += `<td><div class="day-container${todayClass}"><span class="month-label">${cell.month}/</span><button id="button${cell.month.toString().padStart(2, '0')}${(cell.day.toString()).padStart(2, '0')}">${cell.day}</button>${delbtn}${sendbtn}</div></td>`;
-            DAYS.push(`button${cell.month.toString().padStart(2, '0')}${(cell.day.toString()).padStart(2, '0')}`);
+            calendarHtml += `<td><div class="day-container${todayClass}"><span class="month-label">${cell.month}/</span><button id="button${serialNumber.toString()}">${cell.day}</button>${delbtn}${sendbtn}</div></td>`;
+            DAYS.push(`button${serialNumber.toString()}`);
+            serialNumber += 1;
         } else {
             calendarHtml += '<td></td>';
         }

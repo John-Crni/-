@@ -107,23 +107,25 @@ export async function uploadImages() {
         console.log(`KEY_NAME${Areanum} : ${key}`);
     }
   }// button
-  formData.append("SAREA_NUM",Areanum);
   let imageIndex = 0;
   files.forEach((file) => {
     if(daylist.indexOf(file.selectedMD)==-1){
       daylist.push(file.selectedMD);
       imageIndex += 1;
     }
-    const img_num = (files.filter(msd => msd.selectedMD===file.selectedMD)).length;
-    console.log(`img_num(${file.selectedMD}) : ${img_num}`);
+    // const img_num = (files.filter(msd => msd.selectedMD===file.selectedMD)).length;
+    // console.log(`img_num(${file.selectedMD}) : ${img_num}`);
     const md = file.selectedMD.replace("button","");
-    formData.append(`img${md}_${img_num}_${file.lastMd}`, file.imageBlob);
+    formData.append(`img[fName]`,file.fileName);
+    formData.append(`img[${file.fileName}][serialNum]`,md);
+    formData.append(`img[${file.fileName}][lastMd]`,file.lastMd);
+    formData.append(`img[${file.fileName}][image]`,file.imageBlob);
   });
   console.log(`DAY${imageIndex}`);
   formData.append('DAY_NUM' , imageIndex);
 
   // 実際のエンドポイントに書き換えてください
-  ServerResponse =  await fetch("http://192.168.0.16:5000/upload", {
+  ServerResponse =  await fetch("http://192.168.0.14:5000/upload", {
     method: "POST",
     body: formData
   })

@@ -85,7 +85,7 @@ function toggleRange() {
 
     if(!x1 || !y1 || !x2 || !y2){
     } else{
-      localStorage.setItem('SnippingArea' + rangeCount, JSON.stringify({x1, y1, x2, y2}));
+      localStorage.setItem('SnippingArea' + rangeCount, JSON.stringify({rangeCount,x1, y1, x2, y2}));
       rangeCount++;
     }
     overlay.width = absWidth;
