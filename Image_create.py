@@ -4,7 +4,7 @@ from operator import itemgetter
 from operator import attrgetter
 import copy
 import inspect
-from PIL import Image
+from PIL import Image,ImageDraw, ImageFont
 import gc
 import asyncio
 
@@ -40,9 +40,11 @@ class SniptedImageInfo:
     nSnippingAreaNum = 0 #in
     
     nImgNum = 0
+    
+    nGroup = 0
 
     def __init__(self,imgName,serialNum,lstmd,imgblob,snippingAreanum,imgnum):
-        self.nImgNum = imgnum
+        self.nImgNum = int(imgnum)
         self.nSnippingAreaNum = snippingAreanum
         self._sFileName = imgName
         timestamp = int(lstmd)
@@ -136,6 +138,8 @@ class createSerialImage:
     
     _PROCESSED_FOLDER = 'processed'
     
+    FONT_PATH = '7barPBd.TTF'
+    
     _reqData = None #in
         
     _jslSnippingArea = [] # in
@@ -146,6 +150,8 @@ class createSerialImage:
     
     _siAreaArray = [] #another
     
+    _sTableNumbers = []
+    
     _paste_x = 0 #another
     
     _paste_y = 0 #another
@@ -153,7 +159,9 @@ class createSerialImage:
     _shift_x = 0 #another
     
     _shift_y = 0 #another
-    
+
+    _aSpecifyTable = []
+
     def __init__(self,reqData,nlSA):
         self._fSnipptedImages.clear()
         self._reqData = reqData
@@ -163,6 +171,10 @@ class createSerialImage:
         self._jslSnippingArea = sorted(jslSAs,key=itemgetter('rangeCount'))
         # self._nDayCont = nDAY
         imgNames = self._reqData.form.getlist('img[fName]')
+        self._aSpecifyTable = self._reqData.form.getlist('SpecifyTable[]')
+        tablenames = self._reqData.form.get('TableNumbers')
+        if tablenames is not None:
+            self._sTableNumbers = tablenames.split(',')
         
         for i in range(len(imgNames)):
             print("[createSerialImage]",i ,"回目")
@@ -185,10 +197,14 @@ class createSerialImage:
     def cserialImage(self):
         nLenSAA = len(self._fSnipptedImages)
         merged = []
+        mergedSNA = []
+        mergedTBN = []
         counter = 0
         for i in range(len(self._fSnipptedImages)):
             if counter >= nLenSAA:
                 break
+            # IF 指定台番号条件挿入する
+            
             FI = self._fSnipptedImages[counter]
             for j in range(1,FI.nGroup):
                 nextFI = self._fSnipptedImages[counter + j]
@@ -207,6 +223,11 @@ class createSerialImage:
         #         col.nRedgeX += self._paste_x
         #         col.nRedgeY += self._paste_y
         #     merged.append(col.fSnippedImage)
+        
+        for i in range(len(merged)):
+            if i < len(self._sTableNumbers):
+                merged[i] = self.get_setTableNumber(merged[i] , self._sTableNumbers[i])
+                
         reMerged = merged[0]
 
         print("[createSerialImage][_cserialImage]merged:" , len(merged))
@@ -215,8 +236,24 @@ class createSerialImage:
             reMerged = self._get_concat_v(reMerged , merged[i])
         return reMerged
     
+    def get_setTableNumber(self,im2,text2):
+        font = ImageFont.truetype(self.FONT_PATH, size=int(im2.width/3))
+        sample = Image.new("RGB", (200, 100))
+        sampledraw = ImageDraw.Draw(sample)
+        bbox = sampledraw.textbbox((0, 0), text=text2, font=font)
+        texWidth = bbox[2] - bbox[0]  # x2 - x1
+        texHeight= bbox[3] - bbox[1]  # y2 - y1
+        Number = Image.new("RGB", (int(texWidth), int(texHeight)), (47 , 79 , 79))
+        draw = ImageDraw.Draw(Number)
+        draw.text((0,0),text=text2,fill=(255, 255, 255),font=font)
+        dst = Image.new('RGB', (im2.width, Number.height + im2.height) , (47 , 79 , 79))
+        dst.paste(Number, (0, 0))
+        dst.paste(im2, (0, Number.height))
+        return dst
+    
     def _get_concat_v(self,im1, im2):
-        dst = Image.new('RGB', (im1.width, im1.height + im2.height) , (255,0,0))
+        maxWidth = im1.width if im1.width > im2.width else im2.width
+        dst = Image.new('RGB', (maxWidth, im1.height + im2.height) , (47 , 79 , 79))
         dst.paste(im1, (0, 0))
         dst.paste(im2, (0, im1.height))
         return dst
@@ -226,8 +263,45 @@ class createSerialImage:
             processed_path = os.path.join("TEST", f'TEST{i}.png')
             self._fSnipptedImages[i].fSnippedImage.save(processed_path)
 
+    def getLIKey(self):
+        re = "nLastMd"
+        now_Sni = None
+        before_Sni = None
+        for fSni in self._fSnipptedImages:
+            now_Sni = fSni
+            if before_Sni is not None:
+                if now_Sni.nLastMd == before_Sni.nLastMd and now_Sni.nImgNum != before_Sni.nImgNum:
+                    re = 'nImgNum'
+                    break
+            before_Sni = now_Sni
+        return re
+    
+    def fixImgNum(self):
+        now_Sni = None
+        before_Sni = None
+        nImgNum = 1
+        for fSni in self._fSnipptedImages:
+            now_Sni = fSni
+            if before_Sni is not None:
+                if now_Sni.nSerialNum == before_Sni.nSerialNum:
+                    if now_Sni.nLastMd != before_Sni.nLastMd:
+                        nImgNum += 1
+                else:
+                    nImgNum = 1
+            now_Sni.nImgNum = nImgNum
+            before_Sni = now_Sni
+
     def setAreaNum(self):
-        self._fSnipptedImages.sort(key = attrgetter('nSerialNum','nLastMd','nSnippingAreaNum','nImgNum'))
+        self._fSnipptedImages.sort(key = attrgetter('nLastMd','nImgNum','nSnippingAreaNum','nSerialNum'))
+        LIKey = self.getLIKey()
+        if LIKey == 'nLastMd':
+            self.fixImgNum()
+        self._fSnipptedImages.sort(key = attrgetter('nImgNum'))
+        self._fSnipptedImages.sort(key = attrgetter('nSnippingAreaNum','nSerialNum'))
+        self._fSnipptedImages.sort(key = attrgetter('nImgNum'))
+
+        #self._fSnipptedImages.sort(key = attrgetter('nLastMd','nImgNum','nSnippingAreaNum','nSerialNum'))
+        # self._fSnipptedImages.sort(key = attrgetter('nImgNum'))
         #AreaImageArray,nSnippingAreaNum
             # a = []
             # beforeSA = -1
@@ -240,20 +314,69 @@ class createSerialImage:
             #     a.append(img)
         counter = 0
         imgArray = []
-        beforeLI = -1
+        beforeLast = -1
+        beforeImg = -1
+        beforeLIroupe = 0
         beforeSA = -1
+        beforeSAroupe = 0
         beforenum = 0
+        beforenum2 = 0
+        isChange = False
         nArrayNum = len(self._fSnipptedImages)
+
+        print("[createSerialImage][setAreaNum]Start")
+        for fsni in self._fSnipptedImages:
+            print("nLastMd:",fsni.nLastMd , ", nImgNum:" , fsni.nImgNum , ", nSnippingAreaNum:" , fsni.nSnippingAreaNum, ", nSerialNum:" , fsni.nSerialNum)
+        print("[createSerialImage][setAreaNum]End")
+
         for i in range(nArrayNum):
             now_imgNum = self._fSnipptedImages[i].nSnippingAreaNum
-            if (now_imgNum != beforeSA and beforeSA != -1):
+            if (self._ischange(now_imgNum , beforeSA)):
                 for j in range(beforenum , i):
-                    self._fSnipptedImages[j].nGroup = (i)
+                    self._fSnipptedImages[j].nGroup = i - beforeSAroupe
+                    beforeSAroupe = i
                 beforenum = i
             if (i >= (nArrayNum-1)):
                 for j in range(beforenum , i + 1):
-                    self._fSnipptedImages[j].nGroup = (nArrayNum-beforenum)
+                    self._fSnipptedImages[j].nGroup = (nArrayNum - beforenum)
             beforeSA = now_imgNum
+
+        # for i in range(nArrayNum):
+        #     now_imgNum = self._fSnipptedImages[i].nSnippingAreaNum
+        #     now_Last = self._fSnipptedImages[i].nLastMd
+        #     now_Img = self._fSnipptedImages[i].nImgNum
+        #     if (self._ischange(now_Last , beforeLast)):
+        #         for j in range(beforenum2 , i):
+        #             self._fSnipptedImages[j].nGroup = i - beforeLIroupe
+        #             beforeLIroupe = i
+        #         beforenum2 = i
+        #     elif (self._ischange(now_Img , beforeImg)):
+        #         for j in range(beforenum2 , i):
+        #             self._fSnipptedImages[j].nGroup = i - beforeLIroupe
+        #             beforeLIroupe = i
+        #         beforenum2 = i
+        #         isChange = True
+        #     elif (self._ischange(now_imgNum , beforeSA)):
+        #         for j in range(beforenum , i):
+        #             self._fSnipptedImages[j].nGroup = i - beforeSAroupe
+        #             beforeSAroupe = i
+        #         beforenum = i
+        #         isChange = True
+        #     if (i >= (nArrayNum-1) and not isChange):
+        #         for j in range(beforenum , i + 1):
+        #             self._fSnipptedImages[j].nGroup = (nArrayNum - beforenum)
+        #     elif (i >= (nArrayNum-1)):
+        #         for j in range(beforenum2 , i + 1):
+        #             self._fSnipptedImages[j].nGroup = (nArrayNum - beforenum2)
+        #     beforeSA = now_imgNum
+        #     beforeLast = now_Last
+        #     beforeImg = now_Img
+            
+    def _ischange(self , before , now):
+        re = False
+        if (now != before and before != -1):
+            re = True
+        return re        
 
     def _merge_by_anchors(
         self,

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>切抜範囲設定画面</title>
+  <link rel="stylesheet" href="crop.css">
+</head>
+<body>
+  <h1>切抜範囲設定画面</h1>
+  <div class="baseCanvas" id="canvasbase">
+    <canvas id="baseCanvas"></canvas>
+        <div class="overlayCanvas" id="canvaschild">
+            <canvas id="overlayCanvas"></canvas>
+          <input type="text" id="inputTableNum" placeholder="台番号を入力 (区切り文字: , . 、 空白)" class = "inputTableNum">
+          </div>
+          <div class="vertical-group">
+            <input type="file" id="fileInput" accept="image/*" class = "selectbtn4Input" class="test">
+            <button id="areasetting" class = "selectbtn">範囲設定画像選択</button>
+            <button id="rangeBtn" onclick="toggleRange()" class = "selectbtn">範囲設定</button>
+            <button id="cancelBtn" onclick="cancel()" class = "selectbtn">キャンセル</button>
+            <button onclick="finish()" class = "selectbtn">終了</button>
+          </div> 
+  </div>  
+  <br>
+  <script src="crop.js"></script>
+</body>
+</html>
